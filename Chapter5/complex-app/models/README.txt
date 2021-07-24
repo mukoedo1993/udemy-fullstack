@@ -47,3 +47,7 @@ exports.login = function(req, res){
 
 
 ```
+
+
+References:
+[1]: https://stackoverflow.com/questions/10500233/javascript-oop-method-definition-with-or-without-prototype

@@ -169,7 +169,43 @@ User.prototype.register = function(){
 }
 
 User.prototype.getAvatar = function(){
-
+  
     this.avatar = `https://gravatar.com/avatar/${md5(this.data.email)}?s=128`
 }
+
+User.findByUserName = function(username) {
+    //We will not use the OOP approach here, so no prototype:
+      //https://stackoverflow.com/questions/10500233/javascript-oop-method-definition-with-or-without-prototype
+
+      return new Promise(function (resolve, reject) {
+
+        if (typeof(username) != "string") {
+            reject()
+            return
+        }
+
+        userCollection.findOne({username: username}).then(function(userDoc) {
+            if (userDoc) {
+                userDoc = new User(userDoc, true) //Give the avatar based on the email address
+                userDoc = { //We only pass back those three properties to controllers
+                    _id: userDoc.data._id,
+                    username: userDoc.data.username,
+                    avatar: userDoc.avatar,
+                }
+
+                resolve(userDoc) // could find a user
+            } else {
+                reject() //couldn't find a user
+            }
+
+        }).catch(function() {
+            //If it rejects, then it doesn't mean it couldn't find corresponding document, but some systematic errors.
+            reject()
+        }) // second username is the argument of the function
+
+      })
+
+}
+
+
 module.exports = User

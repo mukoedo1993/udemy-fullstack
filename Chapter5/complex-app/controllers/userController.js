@@ -113,4 +113,23 @@ exports.home = function(req, res){
     }
 } 
 
-//res.render('home-guest')
+
+exports.ifUserExists = function(req, res, next) {
+   User.findByUserName(req.params.username).then( function(userDocument) {
+    req.profileUser = userDocument //So we could access to the userDocument outside of this function
+    next()
+   }).catch(function() {
+    //If there is no macthing user interface...
+    //So, here, we just want to run a 404 or page not found screen...
+    res.render("404")
+   })
+}
+
+exports.profilePostsScreen = function(req, res) {
+
+    res.render('profile', {
+        profileUsername: req.profileUser.username,
+        profileAvatar: req.profileUser.avatar,
+
+    })
+}
