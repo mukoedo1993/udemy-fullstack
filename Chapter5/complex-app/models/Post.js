@@ -67,18 +67,10 @@ Post.prototype.create = function() { //where we will actually store our data in 
 
 }
 
-Post.findSingleById = function(id) {
+Post.reusablePostQuery = function(unqiueOperations) {
     return new Promise(async function (resolve, reject) {
         
-        // make sure the requested id make sense and isn't malicious
-        if( typeof(id) != "string" || !ObjectID.isValid(id)) { // if 
-            reject()
-            return // to prevent any further exection
-        }
-
-        //timing! attention!
-        let posts = await postsCollection.aggregate([
-            {$match: {_id: new ObjectID(id)}}, // perform a match by the requested id
+        let aggOperations = unqiueOperations.concat([
             {$lookup: {from: "users", localField: "author", foreignField: "_id", as: "authorDocument"}},   //when we are looking for the user collection from the matching documents, the localField, or the 
             //field in the current post item we want to perform that match on. Local means the curent collection, foreign means other collection we are looking up. And the field we 
             //want to look on the foreign field is the id field...
@@ -94,7 +86,10 @@ Post.findSingleById = function(id) {
             }}
             
 
-        ]).toArray() //It is great when you need to do multiple operations
+        ])
+
+        //timing! attention!
+        let posts = await postsCollection.aggregate(aggOperations).toArray() //It is great when you need to do multiple operations
         //we need toArray function to return a promise, because talking to the database is an asynchronous operation.
 
         //clean up author property in each post object
@@ -107,6 +102,25 @@ Post.findSingleById = function(id) {
             return post
         })
 
+
+        resolve(posts)
+
+    })
+}
+
+
+Post.findSingleById = function(id) {
+    return new Promise(async function (resolve, reject) {
+        
+        // make sure the requested id make sense and isn't malicious
+        if( typeof(id) != "string" || !ObjectID.isValid(id)) { // if 
+            reject()
+            return // to prevent any further exection
+        }
+
+       let posts = await Post.reusablePostQuery([
+           {$match: {_id: new ObjectID(id)}}
+       ])
         if (posts.length) {
             console.log("here posts length post.js")
             console.log(posts[0])
@@ -118,6 +132,15 @@ Post.findSingleById = function(id) {
         }
 
     })
+}
+
+Post.findByAuthorId = function (authorId) {
+    // OK for return a completely empty array of posts
+    return Post.reusablePostQuery([
+        {$match: {author: authorId}},
+        {$sort: {createdDate: -1}} //1 for ascending order, negative 1 for descending order
+
+    ])
 }
 
 module.exports = Post
