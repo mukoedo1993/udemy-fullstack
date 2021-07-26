@@ -67,7 +67,7 @@ Post.prototype.create = function() { //where we will actually store our data in 
 
 }
 
-Post.reusablePostQuery = function(unqiueOperations) {
+Post.reusablePostQuery = function(unqiueOperations, visitorId) {
     return new Promise(async function (resolve, reject) {
         
         let aggOperations = unqiueOperations.concat([
@@ -81,6 +81,7 @@ Post.reusablePostQuery = function(unqiueOperations) {
                 title: 1,
                 body: 1,
                 createdDate: 1,
+                authorId: "$author", //It knows you are talking about a field, not a string of texts.
                 author: {$arrayElemAt: ["$authorDocument", 0]} //set author as first item in the array of authorDocument
 
             }}
@@ -94,6 +95,9 @@ Post.reusablePostQuery = function(unqiueOperations) {
 
         //clean up author property in each post object
         posts = posts.map(function(post) {
+            post.isVisitorOwner = post.authorId.equals(visitorId) //authorId is a mongodb objectId
+
+
             post.author = {
                 username: post.author.username,
                 avatar: new User(post.author, true).avatar
@@ -109,7 +113,7 @@ Post.reusablePostQuery = function(unqiueOperations) {
 }
 
 
-Post.findSingleById = function(id) {
+Post.findSingleById = function(id, visitorId) {
     return new Promise(async function (resolve, reject) {
         
         // make sure the requested id make sense and isn't malicious
@@ -120,7 +124,7 @@ Post.findSingleById = function(id) {
 
        let posts = await Post.reusablePostQuery([
            {$match: {_id: new ObjectID(id)}}
-       ])
+       ], visitorId)
         if (posts.length) {
             console.log("here posts length post.js")
             console.log(posts[0])

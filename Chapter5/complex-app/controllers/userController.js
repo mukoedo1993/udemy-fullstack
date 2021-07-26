@@ -55,6 +55,7 @@ will have actually been updated in time before the redirect runs.
 
 
 exports.logout = function(req, res){
+
     req.session.destroy(function(){
         res.redirect('/')   //redirect them to the homepage
     }) 

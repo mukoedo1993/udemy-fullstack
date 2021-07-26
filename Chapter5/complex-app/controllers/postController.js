@@ -22,7 +22,7 @@ exports.create = function(req, res) {
 
 exports.viewSingle = async function(req, res) {
    try {
-    let post = await Post.findSingleById(req.params.id) // A new instance of blueprint of our model
+    let post = await Post.findSingleById(req.params.id, req.visitorId) // A new instance of blueprint of our model
     //when we create it, it will return a promise.
 
 
