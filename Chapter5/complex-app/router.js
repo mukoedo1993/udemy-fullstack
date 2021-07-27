@@ -38,8 +38,8 @@ router.post('/create-post', userController.mustBeLoggedIn, postController.create
 router.get('/post/:id', postController.viewSingle) //column, and our name part is now flexible. This will represent what user includes after the post slash column...
 // blogging pattern: By default, any post you create is viewable for the public.
 
-router.get('/post/:id/edit', postController.viewEditScreen)
+router.get('/post/:id/edit', userController.mustBeLoggedIn, postController.viewEditScreen)
 
-router.post('/post/:id/edit', postController.edit)
+router.post('/post/:id/edit', userController.mustBeLoggedIn, postController.edit)
 
 module.exports = router// whatever what we set this equal to will be return when we require it.

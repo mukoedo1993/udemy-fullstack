@@ -9,7 +9,6 @@ exports.mustBeLoggedIn = function(req, res, next) {
     next() //The user exists, so we could call the next function.
  } else {
     req.flash("errors", "You must be logged in to perform that action")
-    console.log("Nimasle")
     req.session.save(function(){
         res.redirect('/')
     })

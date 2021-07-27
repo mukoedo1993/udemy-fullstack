@@ -51,9 +51,10 @@ Post.prototype.create = function() { //where we will actually store our data in 
         if (!this.errors.length) {
             //save post into database
 
-            postsCollection.insertOne(this.data).then(() => {
+            postsCollection.insertOne(this.data).then((info) => {
                 console.log(this.data)
-                resolve()//to complete this process
+                resolve(info.ops[0]._id)//to complete this process
+                console.log("info.ops[0]._id" + info.ops[0]._id)
         }).catch(() => {
             this.errors.push("Please try again later.") // server problem, not users' or database's connection problem.
 

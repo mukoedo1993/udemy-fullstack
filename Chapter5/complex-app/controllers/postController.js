@@ -12,11 +12,15 @@ exports.create = function(req, res) {
 
     //Set this method up so it will return a promise...
 
-    post.create().then(function() {
-        res.send("New post created.")
+    post.create().then(function(newId) {
+       req.flash("success", "new post successfully created")
+       console.log("line 17th")
+       console.log(newId)
+       req.session.save(() => res.redirect(`/post/${newId}`))
 
     }).catch(function(errors) {
-        res.send(errors)
+      errors.forEach(error => req.flash("errors", error))
+      req.session.save(() => res.redirect("/create-post"))
     })
 }
 
@@ -37,7 +41,13 @@ exports.viewSingle = async function(req, res) {
 exports.viewEditScreen = async function(req, res) {
     try{
         let post = await Post.findSingleById(req.params.id) //whatever value it resolves with
+       if(post.authorId == req.visitorId) {
         res.render("edit-post", {post: post})
+       } else {
+        req.flash("errors", "You do not have permission to perform that action.")
+        req.session.save(() => res.redirect("/")) // manually save our session data
+       }
+
     } catch {
         res.render("404")
     }
