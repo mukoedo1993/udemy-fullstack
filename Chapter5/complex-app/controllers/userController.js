@@ -9,6 +9,7 @@ exports.mustBeLoggedIn = function(req, res, next) {
     next() //The user exists, so we could call the next function.
  } else {
     req.flash("errors", "You must be logged in to perform that action")
+    console.log("Nimasle")
     req.session.save(function(){
         res.redirect('/')
     })
@@ -109,7 +110,7 @@ exports.home = function(req, res){
 
     } else {
         res.render('home-guest'
-        , {errors: req.flash('errors'), regErrors: req.flash('regErrors')}
+        , {regErrors: req.flash('regErrors')}
        )//HTTP request is stateless, it has no memory that we login just failed.
         //We want to only show the error message to the user once. Once we have shown the user the data, we want to delete it. (course 66th)
     }

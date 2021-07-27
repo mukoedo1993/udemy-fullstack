@@ -40,4 +40,6 @@ router.get('/post/:id', postController.viewSingle) //column, and our name part i
 
 router.get('/post/:id/edit', postController.viewEditScreen)
 
+router.post('/post/:id/edit', postController.edit)
+
 module.exports = router// whatever what we set this equal to will be return when we require it.
