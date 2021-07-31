@@ -23,7 +23,7 @@
         <!--In Javascript, January is usu. represented as 0, and February is usu. represented as 1, so on and so forth.-->
         <!--mm/dd/yyyy format-->
     <div class="body-content">
-        <%= post.body %>
+        <%- filterUserHTML(post.body) %> <!--If here is a minus sign rather than an equal sign, then ejs will no longer protect us and escape HTML.-->
       </div>
 
   </div>

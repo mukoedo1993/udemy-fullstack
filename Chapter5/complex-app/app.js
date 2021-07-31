@@ -6,7 +6,11 @@ const MongoStore = require('connect-mongo')(session)
 
 const flash = require('connect-flash')
 
+const markdown = require('marked')
+
 const app = express()
+
+const sanitizeHTML = require('sanitize-html')
 
 
 //boilerplate code:
@@ -24,6 +28,12 @@ app.use(sessionOptions)
 app.use(flash()) //add the flash feature to our application: course 66th
 
 app.use(function(req, res, next){
+    // make our markdown function avaiable from within our ejs templates
+    res.locals.filterUserHTML = function(content) {
+        return sanitizeHTML(markdown(content), {allowedTags: ['p', 'br', 'ul', 'ol', 'li', 'strong', 'bold', 'i', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ], allowedAttributes: {}})
+        //after sanitizing, our browser still wants to render it as a link, but the sanitizing disallow it. However, allowedTags are forgiven.
+    }
+
 
     // make all error and flash messages available from all templates
     res.locals.errors = req.flash("errors")

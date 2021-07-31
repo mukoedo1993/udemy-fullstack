@@ -6,6 +6,8 @@ const postsCollection = require('../db').db().collection("posts") // to access t
 
 const User = require('./User')
 
+const sanitizeHTML = require('sanitize-html')
+
 let Post = function(data, userid, requestedPostId) {
     this.data = data // incoming requests body data
     this.errors = []
@@ -21,9 +23,12 @@ Post.prototype.cleanUp = function() {
     // make sure that user didn't pass any bogus property in the form data:
     // get rid of any bogus properties
     this.data = {
-        title: this.data.title.trim(),
+        title: sanitizeHTML(this.data.title.trim(), {allowedTags: [], allowedAttributes: {}}),
         //trim():Removes the leading and trailing white space and line terminator characters from a string.
-        body: this.data.body.trim(),
+
+        body: sanitizeHTML(this.data.body.trim(), {allowedTags: [], allowedAttributes: {}}),// first argument: what you want to sanitize, second argument: an object for configuration object
+
+
         createdDate: new Date(),// It is built-in blueprint for Date object, so this will return a Date object represents the current time when this code is executed.
 
         // Actually, mongodb  has a special way to treat id values. To honor that, we could:
@@ -51,9 +56,11 @@ Post.prototype.create = function() { //where we will actually store our data in 
         if (!this.errors.length) {
             //save post into database
 
+            //This mongodb method is going to return a promise, and when that promise resolves, it's going to resolve with
+            //a bunch of information about the database action that just took place.
             postsCollection.insertOne(this.data).then((info) => {
                 console.log(this.data)
-                resolve(info.ops[0]._id)//to complete this process
+                resolve(info.ops[0]._id)//to resolve this brand-new id
                 console.log("info.ops[0]._id" + info.ops[0]._id)
         }).catch(() => {
             this.errors.push("Please try again later.") // server problem, not users' or database's connection problem.
