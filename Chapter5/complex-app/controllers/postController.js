@@ -40,7 +40,7 @@ exports.viewSingle = async function(req, res) {
 
 exports.viewEditScreen = async function(req, res) {
     try{
-        let post = await Post.findSingleById(req.params.id) //whatever value it resolves with
+        let post = await Post.findSingleById(req.params.id, req.visitorId) //whatever value it resolves with //add 2nd argument on course 86th
        if(post.authorId == req.visitorId) {
         res.render("edit-post", {post: post})
        } else {
@@ -85,4 +85,19 @@ exports.edit = async function(req, res) {
             res.redirect("/")
         })
     })
+}
+
+
+
+exports.delete = function (req, res) {
+Post.delete(req.params.id, req.visitorId).then(() => {
+ req.flash("success", "Post successfully deleted.")
+ req.session.save(() => res.redirect(`/profile/${req.session.user.username}`))
+}).catch(() => {
+
+    //If the post doesn't exist or the user tries to operate on this post is not the author of 
+    // the post: 
+    req.flash("errors", "You do not have permission to perform that action.")
+    req.session.save(() => res.redirect("/"))
+})
 }

@@ -42,4 +42,6 @@ router.get('/post/:id/edit', userController.mustBeLoggedIn, postController.viewE
 
 router.post('/post/:id/edit', userController.mustBeLoggedIn, postController.edit)
 
+router.post('/post/:id/delete', userController.mustBeLoggedIn, postController.delete)
+
 module.exports = router// whatever what we set this equal to will be return when we require it.
