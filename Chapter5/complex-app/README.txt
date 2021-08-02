@@ -69,3 +69,10 @@ course 85th:
 npm install marked //On Ubuntu Terminal
 npm install sanitize-html// On Ubuntu terminal
 ```
+
+course 88th:
+```
+npm install webpack webpack-cli @babel/core @babel/preset-env babel-loader
+
+npm install concurrently // deal with conflict of concurrence between unix-based and windows OS
+```

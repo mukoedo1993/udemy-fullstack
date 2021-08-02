@@ -1,0 +1,1 @@
+(()=>{"use strict";new function n(){!function(n,c){if(!(n instanceof c))throw new TypeError("Cannot call a class as a function")}(this,n),alert("Search js is successfully being ".concat("js"," executed"))}})();
