@@ -108,7 +108,7 @@ Post.prototype.actuallyUpdate = function() {
     })
 }
 
-Post.reusablePostQuery = function(unqiueOperations, visitorId) {
+Post.reusablePostQuery = function(unqiueOperations, visitorId, finalOperations = []) {
     return new Promise(async function (resolve, reject) {
         
         let aggOperations = unqiueOperations.concat([
@@ -128,7 +128,7 @@ Post.reusablePostQuery = function(unqiueOperations, visitorId) {
             }}
             
 
-        ])
+        ]).concat(finalOperations)
 
         //timing! attention!
         let posts = await postsCollection.aggregate(aggOperations).toArray() //It is great when you need to do multiple operations
@@ -137,7 +137,7 @@ Post.reusablePostQuery = function(unqiueOperations, visitorId) {
         //clean up author property in each post object
         posts = posts.map(function(post) {
             post.isVisitorOwner = post.authorId.equals(visitorId) //authorId is a mongodb objectId
-
+            post.authorId = undefined // hide users' id
 
             post.author = {
                 username: post.author.username,
@@ -206,5 +206,20 @@ Post.delete = function(postIdToDelete, currentUserId) {
         }
     })
 } 
+
+
+Post.search = function(searchTerm) {
+    return new Promise(async(resolve, reject) => {
+        if (typeof(searchTerm) == "string") { //security reason
+            let posts = await Post.reusablePostQuery([
+                {$match: {$text: {$search: searchTerm}}}
+            ], undefined, [{$sort: {score: {$meta: "textScore"}}}])
+            resolve(posts)
+
+        } else {
+            reject()
+        }
+    })
+}
 
 module.exports = Post
