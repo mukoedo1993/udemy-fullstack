@@ -6,7 +6,7 @@
 
 
     <div class="d-flex justify-content-between">
-      <h2><%= post.title %></h2>
+      <h2><%= post.title %></h2> <!--ejs is going to escape post.title because we use a percent and an equal icon.-->
       <% if(post.isVisitorOwner) {%> <!--dynamic part-->
         <span class="pt-2">
           <a href="/post/<%= post._id %>/edit" class="text-primary mr-2" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fas fa-edit"></i></a>

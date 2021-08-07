@@ -17,3 +17,5 @@ set a reusable file for our footer
 ...
 
 get rid of duplicated code
+
+

@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+import DOMPurify from 'dompurify'
+
 export default class Search {
     //1: Select DOM elements, and keep track of any useful data
     constructor () {
@@ -84,7 +86,10 @@ export default class Search {
     
     if(posts.length) {
       console.log("if(posts.length)")
-      this.resultsArea.innerHTML = `    <div class="list-group shadow-sm">
+
+      //DOMPurify.sanitize could remove any malicious code of cross-site scripting... It will hollow out all potential dangerous content within dangerous divs.
+      //It's alreay the worst scenario... It assumes that our backend database was already compromised, but we still want our frontend to work well.
+      this.resultsArea.innerHTML = DOMPurify.sanitize( `    <div class="list-group shadow-sm">
       <div class="list-group-item active"><strong>Search Results</strong> (${posts.length > 1 ? `${posts.length} items found` : `${posts.length} item found`})</div>
      ${posts.map(post => {
        let postDate = new Date(post.createdDate)
@@ -95,7 +100,7 @@ export default class Search {
     </a>`
 
      }).join('')} <!--join is the separating char.-->
-    </div>`
+    </div>`)
     }else {
       this.resultsArea.innerHTML = `<p class="alert alert-danger text-center shadow-sm">Sorry, we cannot find any results for that search.</p>`
     }
