@@ -42,32 +42,89 @@ export default class Search {
   {
     let value = this.inputField.value
 
+    if (value == "") {
+      clearTimeout(this.typingWaitTimer)
+
+      //After that, hiding both loader icon and results.
+      this.hideLoaderIcon()
+      this.hideResultsArea()
+      console.log("value ==empty string ")
+    }
+    
     if (value != "" && value != this.previousValue) {
       clearTimeout(this.typingWaitTimer)
+      console.log("value !=empty string ")
       this.showLoaderIcon()
-      this.typingWaitTimer = setTimeout( () => this.sendRequest() , 3000)
+
+      this.hideResultsArea()
+
+      this.typingWaitTimer = setTimeout( () => this.sendRequest() , 750)
       //If you typed alphabet 'p', and then wait for 2000ms, then you typed alphabet 'u', the clearTimeout will reset the time.
       //But if you finally typed 'y', and then wait for 3000ms, then typingWaitTimer will finish its mission.
     }
 
     this.previousValue = value
-    this.showLoaderIcon()
+    //this.showLoaderIcon() //Commented out in course 93rd
   }
 
 
   sendRequest () {
     axios.post('/search', {searchTerm: this.inputField.value}).then(response => {
       console.log(response.data)
+
+      this.renderResultsHTML(response.data) //pass an array of raw Json data.
+
     }).catch(() => {
       alert("Hello, the request failed.")
     })
   
   }
 
+  renderResultsHTML (posts) {
+    
+    if(posts.length) {
+      console.log("if(posts.length)")
+      this.resultsArea.innerHTML = `    <div class="list-group shadow-sm">
+      <div class="list-group-item active"><strong>Search Results</strong> (${posts.length > 1 ? `${posts.length} items found` : `${posts.length} item found`})</div>
+     ${posts.map(post => {
+       let postDate = new Date(post.createdDate)
+       console.log(postDate)
+      return `<a href="/post/${post._id}" class="list-group-item list-group-item-action">
+      <img class="avatar-tiny" src="${post.author.avatar}"> <strong>${post.title}</strong>
+      <span class="text-muted small">by ${post.author.username} on ${postDate.getMonth()}/${postDate.getDate()}/${postDate.getFullYear()}</span>
+    </a>`
+
+     }).join('')} <!--join is the separating char.-->
+    </div>`
+    }else {
+      this.resultsArea.innerHTML = `<p class="alert alert-danger text-center shadow-sm">Sorry, we cannot find any results for that search.</p>`
+    }
+
+    this.hideLoaderIcon()
+    this.showResultsArea()
+  }
+
     showLoaderIcon()
     {
+      console.log("showLOaderIcon called")
       this.loaderIcon.classList.add("circle-loader--visible")
     }
+
+    hideLoaderIcon()
+    {
+      console.log("hideLOaderIcon called")
+      this.loaderIcon.classList.remove("circle-loader--visible")
+    }
+
+    showResultsArea()
+    {
+      this.resultsArea.classList.add("live-search-results--visible")
+    }
+    hideResultsArea()
+    {
+      this.resultsArea.classList.remove("live-search-results--visible")
+    }
+
 
     openOverlay()
  {
@@ -103,28 +160,7 @@ export default class Search {
         <div class="search-overlay-bottom">
           <div class="container container--narrow py-3">
             <div class="circle-loader"></div>
-            <div class="live-search-results">
-              <div class="list-group shadow-sm">
-                <div class="list-group-item active"><strong>Search Results</strong> (4 items found)</div>
-    
-                <a href="#" class="list-group-item list-group-item-action">
-                  <img class="avatar-tiny" src="https://gravatar.com/avatar/b9216295c1e3931655bae6574ac0e4c2?s=128"> <strong>Example Post #1</strong>
-                  <span class="text-muted small">by barksalot on 0/14/2019</span>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
-                  <img class="avatar-tiny" src="https://gravatar.com/avatar/b9408a09298632b5151200f3449434ef?s=128"> <strong>Example Post #2</strong>
-                  <span class="text-muted small">by brad on 0/12/2019</span>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
-                  <img class="avatar-tiny" src="https://gravatar.com/avatar/b9216295c1e3931655bae6574ac0e4c2?s=128"> <strong>Example Post #3</strong>
-                  <span class="text-muted small">by barksalot on 0/14/2019</span>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action">
-                  <img class="avatar-tiny" src="https://gravatar.com/avatar/b9408a09298632b5151200f3449434ef?s=128"> <strong>Example Post #4</strong>
-                  <span class="text-muted small">by brad on 0/12/2019</span>
-                </a>
-              </div>
-            </div>
+            <div class="live-search-results"></div>
           </div>
         </div>
       </div>`)

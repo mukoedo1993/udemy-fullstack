@@ -4,6 +4,9 @@ const ObjectID = require('mongodb').ObjectID //A class representation of the BSO
 
 const postsCollection = require('../db').db().collection("posts") // to access to the database
 
+
+postsCollection.createIndex({title: "text", body: "text"})
+
 const User = require('./User')
 
 const sanitizeHTML = require('sanitize-html')
