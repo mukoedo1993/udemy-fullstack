@@ -1,0 +1,18 @@
+const { NoEmitOnErrorsPlugin } = require('webpack')
+const Follow = require('../models/Follow')
+
+exports.addFollow = function (req, res) {
+    let follow = new Follow(req.params.username, req.visitorId)
+
+    follow.create().then(() => {
+        req.flash("success", `Successfully followed ${req.params.username}`)
+        req.session.save(() => res.redirect(`/profile/${req.params.username}`))
+    }).catch(() => {
+        //The user is trying something weird, malicious and strange.
+        errors.forEach(error => {
+            req.flash("errors", error)
+        })
+
+        req.session.save(() => res.redirect('/'))
+    }) 
+}

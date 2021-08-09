@@ -18,10 +18,12 @@
     </div>
       
     <p class="text-muted small mb-4">
-      <a href="#"><img class="avatar-tiny" src="<%= post.author.avatar %>"></a>
-      Posted by <a href="#"><%= post.author.username %></a> on <%= post.createdDate.getMonth() + 1 %>/<%= post.createdDate.getDate() %>/<%= post.createdDate.getFullYear() %></p>
+      <a href="/profile/<%= post.author.username %>"><img class="avatar-tiny" src="<%= post.author.avatar %>"></a>
+      Posted by <a href="/profile/<%= post.author.username %>"><%= post.author.username %></a> on <%= post.createdDate.getMonth() + 1 %>/<%= post.createdDate.getDate() %>/<%= post.createdDate.getFullYear() %></p>
         <!--In Javascript, January is usu. represented as 0, and February is usu. represented as 1, so on and so forth.-->
         <!--mm/dd/yyyy format-->
+
+
     <div class="body-content">
         <%- filterUserHTML(post.body) %> <!--If here is a minus sign rather than an equal sign, then ejs will no longer protect us and escape HTML.-->
       </div>

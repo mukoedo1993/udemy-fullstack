@@ -17,6 +17,8 @@ const userController = require('./controllers/userController')
 
 const postController = require('./controllers/postController')
 
+const followController = require('./controllers/followController')
+
 //user related routes
 router.get('/', userController.home)
 
@@ -46,4 +48,7 @@ router.post('/post/:id/delete', userController.mustBeLoggedIn, postController.de
 
 router.post('/search', postController.search)
 
+//follow related routes
+
+router.post('/addFollow/:username', userController.mustBeLoggedIn, followController.addFollow) //username is a query parameter
 module.exports = router// whatever what we set this equal to will be return when we require it.
