@@ -3,6 +3,22 @@
 const { reset } = require('nodemon')
 const User = require('../models/User') // reusable blueprint or ctor. functions.
 const Post = require('../models/Post') 
+const Follow = require('../models/Follow') 
+
+
+exports.sharedProfileData = async function (req, res, next) {
+    let isVisitorsProfile = false
+
+    let isFollowing = false
+    if(req.session.user/*If the user is logged in*/) {
+        isVisitorsProfile = await req.profileUser._id.equals(req.session.user._id)
+       isFollowing = await Follow.isVisitorFollowing(req.profileUser._id, req.visitorId) //first argument comes from request object, from a function named, doesUserExist.
+    }
+
+    req.isVisitorsProfile = isVisitorsProfile
+    req.isFollowing = isFollowing
+    next()
+}
 
 exports.mustBeLoggedIn = function(req, res, next) {
  if(req.session.user) {
@@ -135,7 +151,8 @@ exports.profilePostsScreen = function(req, res) {
             posts: posts,
             profileUsername: req.profileUser.username,
             profileAvatar: req.profileUser.avatar,
-    
+            isFollowing: req.isFollowing, // updated in course 99th
+            isVisitorsProfile: req.isVisitorsProfile
         })
 
     }).catch(function () {

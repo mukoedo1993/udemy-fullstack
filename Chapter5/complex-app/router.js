@@ -29,7 +29,7 @@ router.post('/login', userController.login)
 router.post('/logout', userController.logout)
 
 //profile related routes
-router.get('/profile/:username', userController.ifUserExists, userController.profilePostsScreen)
+router.get('/profile/:username', userController.ifUserExists, userController.sharedProfileData, userController.profilePostsScreen)
 
 // post related routes
 router.get('/create-post', userController.mustBeLoggedIn ,postController.viewCreateScreen) // But we want to make sure that we could only visit this post if we are logged in.
@@ -51,4 +51,7 @@ router.post('/search', postController.search)
 //follow related routes
 
 router.post('/addFollow/:username', userController.mustBeLoggedIn, followController.addFollow) //username is a query parameter
+router.post('/removeFollow/:username', userController.mustBeLoggedIn, followController.removeFollow) //username is a query parameter
+
+
 module.exports = router// whatever what we set this equal to will be return when we require it.
