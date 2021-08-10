@@ -3,6 +3,8 @@ const followsCollection = require('../db').db().collection("follows")
 
 const ObjectID = require('mongodb').ObjectID
 
+const User = require('./User')
+
 let Follow = function (followedUsername, authorId) {
     this.followedUsername = followedUsername
     this.authorId = authorId
@@ -92,4 +94,34 @@ Follow.isVisitorFollowing = async function(followedId , visitorId) { //dealing w
     }
 }
 
+Follow.getFollowersById = function (id) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let followers = await followsCollection.aggregate([
+                {$match: {followedId: id}},
+                {$lookup: {from: "users", localField: "authorId", foreignField: "_id", as:"userDoc"}}, //from is the collection we are looking up now,
+                //We are looking into the user's collection for documents where the _id matches the author's ID from the follow document. And, finally
+                //after the id, we would say comma and add a property named "as". We can make it any name, let's call it userDoc, 
+                {$project: {
+                    username: {$arrayElemAt: ["$userDoc.username", 0]},
+                    email: {$arrayElemAt: ["$userDoc.email", 0]},
+                
+                }}
+            ]).toArray() 
+
+
+            followers = followers.map(function(follower){
+              let user = new User(follower, true) //follower will be the data that populates the ctor. function.
+              //figure out the gravatar based on the user's email address
+
+              return {username: follower.username, avatar: user.avatar}
+            })
+
+            resolve(followers)
+        } catch {
+            reject()
+        }
+       
+    })
+}
 module.exports = Follow
