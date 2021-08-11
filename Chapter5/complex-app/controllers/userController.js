@@ -132,11 +132,18 @@ exports.register = function(req , res){
 }
 
 // 
-exports.home = function(req, res){
+exports.home = async function(req, res){
     if (req.session.user) {
-        res.render('home-dashboard'
+
+        // fetch feed of posts for current user
+        let posts = await Post.getFeed(req.session.user._id)
+
+
+        res.render('home-dashboard',
        //, {username: req.session.user.username, avatar: req.session.user.avatar}   // we have already passed it in app.js. Commented in course 71st
-                                      ) // we want to pass the second argument as JS object to the first argument.
+                                      // we want to pass the second argument as JS object to the first argument.
+                    {posts: posts}
+       ) 
 
     } else {
         res.render('home-guest'

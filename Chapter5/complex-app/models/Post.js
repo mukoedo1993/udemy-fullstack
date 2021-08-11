@@ -4,6 +4,7 @@ const ObjectID = require('mongodb').ObjectID //A class representation of the BSO
 
 const postsCollection = require('../db').db().collection("posts") // to access to the database
 
+const followsCollection = require('../db').db().collection("follows") // to access to the database
 
 postsCollection.createIndex({title: "text", body: "text"})
 
@@ -232,6 +233,24 @@ Post.countPostsByAuthor = function (id) {
 
         resolve(postCount)
     })
+}
+
+Post.getFeed = async function (id) {
+    // create an array of the user ids that the current user follows
+    let followedUsers = await followsCollection.find({authorId: new ObjectID(id)}).toArray()
+
+    followedUsers = followedUsers.map(function (followDoc) {
+        return followDoc.followedId
+    }) //So, since here, followedUser will only have followers' id.
+
+    // looked for posts where the author is in the above array of followed users
+    return Post.reusablePostQuery([
+
+        {$match: {author: {$in: followedUsers}}}, //Find any post document where the author value is a value that is in our array of followUsers.
+
+        {$sort: {createdDate: -1}} // So the newest value will be on the top
+
+    ]) //Here, figure out author's username and fetch its gravatar.
 }
 
 module.exports = Post
