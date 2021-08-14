@@ -8,22 +8,46 @@ export default class Chat {
         this.openIcon = document.querySelector(".header-chat-icon")
 
         this.injectHTML()
+
+        this.chatField = document.querySelector("#chatField")
+        this.chatForm = document.querySelector("#chatForm")
+
+
         this.closeIcon = document.querySelector(".chat-title-bar-close") //Because this element doesn't even exist before we inject the HTML.
 
         this.events()
+
+
+        // Create a few properties select the text field.
+
 
     }
 
     // Events
     events() {
+        this.chatForm.addEventListener("submit", (e) => {
+            e.preventDefault() //When this form is submitted, we want to prevent a hard reload. We want to stop that default behavior.
+            this.sendMessageToServer()
+
+        })
+
         this.openIcon.addEventListener("click", () => this.showChat())
 
         this.closeIcon.addEventListener("click", () => this.hideChat())
     }
 
     // Methods
+    sendMessageToServer() {
+        this.socket.emit('chatMessageFromBrowser', {message: this.chatField.value})
+
+        this.chatField.value = ''
+        
+        this.chatField.focus()
+    }
+
     hideChat () {
         this.chatWrapper.classList.remove("chat--visible") 
+
 
     }
 
@@ -39,7 +63,13 @@ export default class Chat {
     }
 
     openConnection () {
-        alert("Opening a connection.")
+
+        this.socket = io() //It will open a connection between the browser and the server.
+        this.socket.on('chatMessageFromServer' , function (data) {
+            alert(data.message)
+        })
+
+        
     }
 
     injectHTML() {

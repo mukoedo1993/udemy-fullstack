@@ -89,3 +89,10 @@ course 96th:
 npm install dompurify # clean our front-end code. So, even in the worst senario, our backend database is compromised, then we could still prevent
 # our frontend from executing malicious JS code.
 ```
+
+
+
+course 107th:
+```
+npm install socket.io
+```

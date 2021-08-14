@@ -83,4 +83,21 @@ app.set('view engine', 'ejs') // It tells our app which template engine we are u
 //})
 app.use('/', router) // It works in the same way as 3 lines of code before.
 
-module.exports = app // instead of actually listening, we just export it from the file.
+
+const server = require('http').createServer(app)
+
+const io = require('socket.io') (server)
+
+
+io.on('connection', function(socket) {
+
+    //Soeckt events are powerful. We are free to create as many as possible methods if we want.
+
+    //We are sending our message to the server, and the server will send out message to all browser-side users.
+    socket.on('chatMessageFromBrowser' , function (data) {
+        io.emit('chatMessageFromServer' , {message: data.message})
+    })
+})
+
+module.exports = server // instead of actually listening, we just export it from the file.
+//Now, we are going to tell our all server to listening.
