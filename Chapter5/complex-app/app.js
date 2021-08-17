@@ -88,15 +88,27 @@ const server = require('http').createServer(app)
 
 const io = require('socket.io') (server)
 
+io.use(function (socket, next) { //Make our session data available in the context of io. course 109th.
+    sessionOptions(socket.request, socket.request.res, next)
+})
 
 io.on('connection', function(socket) {
 
     //Soeckt events are powerful. We are free to create as many as possible methods if we want.
 
-    //We are sending our message to the server, and the server will send out message to all browser-side users.
-    socket.on('chatMessageFromBrowser' , function (data) {
-        io.emit('chatMessageFromServer' , {message: data.message})
+    if (socket.request.session.user) {
+        let user = socket.request.session.user
+
+        socket.emit('welcome', {username: user.username, avatar: user.avatar}) //If 
+
+        socket.on('chatMessageFromBrowser' , function (data) {
+
+
+            //sanitize chat message here in the 2nd argument.
+        socket.broadcast.emit('chatMessageFromServer' , {message: sanitizeHTML(data.message, {allowedTags: [], allowedAttributes: {}}), username:user.username, avatar: user.avatar})
+        //It will sent messages to all connected except the sender.
     })
+    }
 })
 
 module.exports = server // instead of actually listening, we just export it from the file.
