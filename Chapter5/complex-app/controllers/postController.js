@@ -30,7 +30,9 @@ exports.viewSingle = async function(req, res) {
     //when we create it, it will return a promise.
 
 
-    res.render('single-post-screen', {post: post}) //passes the post as the variable of post
+    res.render('single-post-screen', {post: post, title: post.title}) //passes the post as the variable of post
+    // enhance our printed-out title here.
+
    } catch {
     // 404 
     res.render('404')
