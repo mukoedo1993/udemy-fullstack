@@ -14,6 +14,10 @@
         <label for="post-body" class="text-muted mb-1"><small>Body Content</small></label>
         <textarea required name="body" id="post-body" class="body-content tall-textarea form-control" type="text"></textarea>
       </div>
+
+      <!--name is strict here. Because the name here is the csrf package is going to look for.-->
+      <!--No way a malicious user could access to the value.-->
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       
       <button class="btn btn-primary">Save New Post</button>
     </form>

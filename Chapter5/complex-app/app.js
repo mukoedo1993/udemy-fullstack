@@ -8,6 +8,8 @@ const flash = require('connect-flash')
 
 const markdown = require('marked')
 
+const csrf = require('csurf')
+
 const app = express()
 
 const sanitizeHTML = require('sanitize-html')
@@ -77,12 +79,36 @@ app.set('view engine', 'ejs') // It tells our app which template engine we are u
 
 
 
+app.use(csrf())
+//So, any of our post, put, delete or any request that modifies state will need to have a valid matching CSRF token or else the request 
+//will be rejected and we'll throw an error.
+
+app.use(function (req, res, next) {
+    const token = req.csrfToken()
+    res.locals.csrfToken = token
+    next()
+})
+
+
 //app.get('/' , function(req, res){ // url, or route
    
 //    res.render('home-guest') //We just give a name of the template...
 //})
 app.use('/', router) // It works in the same way as 3 lines of code before.
 
+app.use(function (err, req, res, next) {
+    if(err) {
+        if (err.code == "EBADCSRFTOKEN") {
+            req.flash('errors', "Cross site request forgery detected.")
+
+            req.session.save( () => {
+                res.redirect('/')
+            })
+        } else {
+            res.render("404")
+        }
+    }
+})
 
 const server = require('http').createServer(app)
 
