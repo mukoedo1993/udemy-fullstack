@@ -4,9 +4,25 @@ const { reset } = require('nodemon')
 const User = require('../models/User') // reusable blueprint or ctor. functions.
 const Post = require('../models/Post') 
 const Follow = require('../models/Follow') 
+const { ReplSet } = require('mongodb')
 
 
 //All sharedProfile basic routes called this function.
+
+
+exports.doesUsernameExist = function (req, res) {
+    User.findByUserName(req.body.username).then( function () {
+        res.json(true) //data axio will request or receive
+    }).catch(function () {
+        res.json(false)
+    })
+}
+
+exports.doesEmailExist = async function (req, res) {
+    let emailBool = await User.doesEmailExist(req.body.email)
+    res.json(emailBool)
+}
+
 exports.sharedProfileData = async function (req, res, next) {
     let isVisitorsProfile = false
 
