@@ -172,8 +172,10 @@ Post.findSingleById = function(id, visitorId) {
        ], visitorId)
         if (posts.length) {
             console.log("here posts length post.js")
-            console.log(posts[0])
-
+            
+            console.log(visitorId)
+            console.log(id)
+            posts[0].authorId = visitorId
             
             resolve(posts[0])
         } else {

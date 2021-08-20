@@ -1,5 +1,7 @@
 const Post = require('../models/Post')
 
+const ObjectID1 = require('mongodb').ObjectID
+
 exports.viewCreateScreen = function(req, res) {
     res.render('create-post'
   //  , {username: req.session.user.username, avatar: req.session.user.avatar} // commented in course 71st
@@ -43,6 +45,19 @@ exports.viewSingle = async function(req, res) {
 exports.viewEditScreen = async function(req, res) {
     try{
         let post = await Post.findSingleById(req.params.id, req.visitorId) //whatever value it resolves with //add 2nd argument on course 86th
+
+      
+
+        console.log("post.authorId is:")
+        console.log(post)
+        
+        console.log("post.authorId is given.")
+
+        console.log("reqis:")
+        console.log(req.visitorId)
+        
+        console.log("req is given.")
+       
        if(post.authorId == req.visitorId) {
         res.render("edit-post", {post: post})
        } else {
