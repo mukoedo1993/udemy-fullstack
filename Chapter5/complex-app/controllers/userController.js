@@ -11,6 +11,20 @@ const jwt = require('jsonwebtoken')
 
 //All sharedProfile basic routes called this function.
 
+exports.apiGetPostsByUsername = async function (req, res) {
+ 
+    try {
+        let authorDoc = await User.findByUserName(req.params.username) //If there is not the username, then this promise will going to reject.
+
+        let posts = await Post.findByAuthorId(authorDoc._id)
+
+        res.json(posts)
+
+    } catch {
+        res.json("Sorry, invalid user requested.")
+    }
+}
+
 exports.apiMustBeLoggedIn = function (req, res, next) {
  try {
     req.apiUser = jwt.verify(req.body.token, process.env.JWTSECRET) // It's going to return the payload that stored in the token.

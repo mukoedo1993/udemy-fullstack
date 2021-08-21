@@ -135,6 +135,15 @@ Post.delete(req.params.id, req.visitorId).then(() => {
 })
 }
 
+exports.apiDelete = function (req, res) {
+    Post.delete(req.params.id, req.apiUser._id).then(() => {
+        res.json("Success")
+    }).catch(() => {
+    
+        res.json("You do not have permission to perform that action.")
+    })
+    }
+
 
 exports.search = function (req, res) {
     Post.search(req.body.searchTerm).then((posts) => {

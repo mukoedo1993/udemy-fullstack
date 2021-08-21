@@ -107,3 +107,8 @@ course 119th:
 ```
 npm install jsonwebtoken
 ```
+
+course 121st:
+```
+npm install cors
+```
