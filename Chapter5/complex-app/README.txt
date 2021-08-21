@@ -102,3 +102,8 @@ course 116th:
 ```
 npm install csurf //csur attack
 ```
+
+course 119th:
+```
+npm install jsonwebtoken
+```

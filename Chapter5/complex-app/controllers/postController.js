@@ -26,6 +26,22 @@ exports.create = function(req, res) {
     })
 }
 
+exports.apiCreate = function(req, res) {
+    let post = new Post(req.body, req.apiUser._id) // pass the submitted form data
+
+    //Set this method up so it will return a promise...
+
+    post.create().then(function(newId) {
+       
+       res.json("Congrats.")
+
+    }).catch(function(errors) {
+      res.json(errors)
+      console.log("line 40th, some errors, no good...")
+    })
+}
+
+
 exports.viewSingle = async function(req, res) {
    try {
     let post = await Post.findSingleById(req.params.id, req.visitorId) // A new instance of blueprint of our model

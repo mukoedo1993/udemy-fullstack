@@ -6,9 +6,21 @@ const Post = require('../models/Post')
 const Follow = require('../models/Follow') 
 const { ReplSet } = require('mongodb')
 
+const jwt = require('jsonwebtoken')
+
 
 //All sharedProfile basic routes called this function.
 
+exports.apiMustBeLoggedIn = function (req, res, next) {
+ try {
+    req.apiUser = jwt.verify(req.body.token, process.env.JWTSECRET) // It's going to return the payload that stored in the token.
+
+    next() // In the next function for this route, we will be able to access req.apiUser here.
+
+ } catch {
+    res.json("Sorry, you must provide a valid token.")
+ }
+}
 
 exports.doesUsernameExist = function (req, res) {
     User.findByUserName(req.body.username).then( function () {
@@ -99,6 +111,22 @@ will have actually been updated in time before the redirect runs.
     }) 
 
 }
+
+
+exports.apiLogin = function(req, res){ 
+    //compared to the original login function, we do not need to worry about sessions and flash messages here.
+    let user = new User(req.body)
+    user.login().then(function(result){
+        
+        //jwt.sign: actually, we stored our token here.
+     res.json(jwt.sign({_id: user.data._id}, process.env.JWTSECRET, {expiresIn: '30m'}))
+
+    }).catch(function(e){
+
+       res.json("Sorry, but your value is not correct.")
+       })
+    }
+
 
 
 exports.logout = function(req, res){

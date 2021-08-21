@@ -14,6 +14,16 @@ const app = express()
 
 const sanitizeHTML = require('sanitize-html')
 
+app.use(express.urlencoded({ extended: false}))
+//It tells the express to add user submitted data onto our requested object. So we can access it via our request.
+
+app.use(express.json())
+
+
+app.use('/api', require('./router-api')) //All of app.use() below will not be applies to this route.
+//Hence, very lightweight, very fase and very repsosn
+
+
 
 //boilerplate code:
 //course 65th update: modify this object so that it could save data in mongodb database.
@@ -63,10 +73,6 @@ const router = require('./router')
 console.log(router)
 
 
-app.use(express.urlencoded({ extended: false}))
-//It tells the express to add user submitted data onto our requested object. So we can access it via our request.
-
-app.use(express.json())
 
 
 app.use(express.static('public'))//We want to make the folder, public, accessible, for anyone who wants to view our app...
