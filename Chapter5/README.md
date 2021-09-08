@@ -1,4 +1,4 @@
-# Chapter 5 and 6 and 7 #
+# Chapter 5 to 12 #
 A more complex app.
 
 
