@@ -6,3 +6,6 @@ https://github.com/mukoedo1993/full-stack-course-udemy
 
 ## My final project:
 https://github.com/mukoedo1993/Shaberu
+
+### Mongodb documentation:
+https://mongodb.github.io/node-mongodb-native/markdown-docs/queries.html
