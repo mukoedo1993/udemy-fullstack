@@ -3,3 +3,6 @@ This repo hosts mainly my personal notes on [the udemy course here](https://www.
 
 ## Before 77th course:
 https://github.com/mukoedo1993/full-stack-course-udemy
+
+## My final project:
+https://github.com/mukoedo1993/Shaberu
